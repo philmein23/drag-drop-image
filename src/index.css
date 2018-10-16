@@ -12,3 +12,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.drop-zone {
+  height: 50vh;
+  width: 50vw;
+}
