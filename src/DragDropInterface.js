@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { uploadImage } from './constants';
 
 class DragDropInterface extends Component {
   state = {
@@ -12,20 +13,22 @@ class DragDropInterface extends Component {
   };
 
   dragOverHandler = event => {
-    console.log('copy...');
+    console.log('move...');
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
+    event.dataTransfer.dropEffect = 'move';
   };
 
   dropHandler = event => {
     console.log('drop zone');
     event.preventDefault();
-    let data = event.dataTransfer.getData('text/plain');
+    // let data = event.dataTransfer.getData('text/plain');
 
-    console.log('data', data);
+    let files = event.dataTransfer.files;
+    console.log('data', files);
 
-    let imageListingContainer = document.getElementById('image-listing');
-    imageListingContainer.appendChild(this.createImage(data));
+    console.log('data transfer', event.dataTransfer);
+
+    this.fileHandler(files[Symbol.iterator]());
   };
 
   createImage = src => {
@@ -35,10 +38,44 @@ class DragDropInterface extends Component {
     return image;
   };
 
+  fileHandler = files => {
+    for (let file of files) {
+      if (file.type.startsWith('image/')) {
+        let img = new Image();
+        let imageListingContainer = document.getElementById('image-listing');
+
+        img.file = file;
+
+        imageListingContainer.appendChild(img);
+
+        let fileReader = new FileReader();
+        fileReader.onload = (function(aImg) {
+          return function(event) {
+            aImg.src = event.target.result;
+            console.log('result', aImg.src);
+
+            uploadImage(event.target.result);
+          };
+        })(img);
+        fileReader.readAsDataURL(file);
+      }
+    }
+  };
+
   render() {
     let { isDraggable } = this.state;
     return (
       <div>
+        <div>
+          <input
+            type="file"
+            id="fileElem"
+            multiple
+            accept="image/*"
+            className="visually-hidden"
+          />
+          <label htmlFor="fileElem">Select some files</label>
+        </div>
         <div>
           <img
             id="123"
@@ -56,8 +93,8 @@ class DragDropInterface extends Component {
           onDragOver={this.dragOverHandler}
         >
           Drop Zone
+          <div id="image-listing" />
         </div>
-        <div id="image-listing" />
       </div>
     );
   }
