@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { uploadImage } from './constants';
+import React, { Component } from "react";
+import { uploadImage } from "./constants";
 
 class DragDropInterface extends Component {
   state = {
@@ -7,26 +7,26 @@ class DragDropInterface extends Component {
   };
 
   dragStartHandler = event => {
-    console.log('drag start...');
+    console.log("drag start...");
 
-    event.dataTransfer.setData('text/plain', event.target.src);
+    event.dataTransfer.setData("text/plain", event.target.src);
   };
 
   dragOverHandler = event => {
-    console.log('move...');
+    console.log("move...");
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = "move";
   };
 
   dropHandler = event => {
-    console.log('drop zone');
+    console.log("drop zone");
     event.preventDefault();
     // let data = event.dataTransfer.getData('text/plain');
 
     let files = event.dataTransfer.files;
-    console.log('data', files);
+    console.log("data", files);
 
-    console.log('data transfer', event.dataTransfer);
+    console.log("data transfer", event.dataTransfer);
 
     this.fileHandler(files[Symbol.iterator]());
   };
@@ -40,9 +40,9 @@ class DragDropInterface extends Component {
 
   fileHandler = files => {
     for (let file of files) {
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith("image/")) {
         let img = new Image();
-        let imageListingContainer = document.getElementById('image-listing');
+        let imageListingContainer = document.getElementById("image-listing");
 
         img.file = file;
 
@@ -52,7 +52,7 @@ class DragDropInterface extends Component {
         fileReader.onload = (function(aImg) {
           return function(event) {
             aImg.src = event.target.result;
-            console.log('result', aImg.src);
+            console.log("result", aImg.src);
 
             uploadImage(event.target.result);
           };
